@@ -3,14 +3,10 @@ package com.zxy.service.impl;
 import com.zxy.model.Customer;
 import com.zxy.repository.CustomerRepository;
 import com.zxy.service.CustomerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -24,4 +20,15 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepository.delete(customer);
     }
 
+    @Override
+    public Iterable<Customer> regexpQuery(String name, String regexp) {
+        QueryBuilder queryBuilder = QueryBuilders.regexpQuery(name, regexp);
+        return customerRepository.search(queryBuilder);
+    }
+
+    @Override
+    public Iterable<Customer> matchPhraseQuery(String name, String value) {
+        QueryBuilder queryBuilder = QueryBuilders.matchPhraseQuery(name, value);
+        return customerRepository.search(queryBuilder);
+    }
 }

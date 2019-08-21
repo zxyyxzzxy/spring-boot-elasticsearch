@@ -3,18 +3,23 @@ package com.zxy.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
-@Document(indexName = "customer", type="doc", shards = 2, replicas = 1, refreshInterval = "-1")
+@Document(indexName = "customer", type="doc", shards = 2, replicas = 1, refreshInterval = "30s")
 public class Customer {
 
 	//Id注解加上后，在Elasticsearch里相应于该列就是主键了，在查询时就可以直接用主键查询
 	@Id
 	private String id;
 
+	@Field(type = FieldType.Text, analyzer = "index_ansj_pinyin_analyzer", searchAnalyzer = "query_ansj_pinyin_analyzer")
 	private String userName;
 
+	@Field(type = FieldType.Text, analyzer = "index_ansj_pinyin_analyzer", searchAnalyzer = "query_ansj_pinyin_analyzer")
 	private String address;
 
+	@Field
 	private int age;
 
 	public Customer() {

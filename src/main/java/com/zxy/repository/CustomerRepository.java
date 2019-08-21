@@ -13,8 +13,10 @@ import java.util.List;
 @Repository
 public interface CustomerRepository extends ElasticsearchRepository<Customer, String> {
 	public List<Customer> findByAddress(String address);
+	public List<Customer> findByAddressLike(String address);
 	public Customer findByUserName(String userName);
 	public Page<Customer> findByAddress(String address, Pageable pageable);
+	public List<Customer> findByAge(Integer age);
 
 
 }

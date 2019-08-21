@@ -5,7 +5,6 @@ import com.zxy.service.CustomerService;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.rankeval.RankEvalPlugin;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
@@ -39,10 +38,10 @@ public class CustomerRepositoryTest {
 
     @Test
     public void saveCustomers() {
-        repository.save(new Customer("Alice", "北京",13));
-        repository.save(new Customer("Bob", "北京",23));
-        repository.save(new Customer("Ashin", "成都",27));
-        repository.save(new Customer("summer", "烟台",22));
+        repository.save(new Customer("Bill Alice", "北京",13));
+        repository.save(new Customer("Steve Bob", "北京",23));
+        repository.save(new Customer("Ashin Chou", "成都",27));
+        repository.save(new Customer("Michael Summer", "烟台",22));
     }
 
     @Test
@@ -72,6 +71,13 @@ public class CustomerRepositoryTest {
     }
 
     @Test
+    public void findByAge() {
+        System.out.println("Customer found findByAge(22):");
+        System.out.println("--------------------------------");
+        System.out.println(repository.findByAge(22));
+    }
+
+    @Test
     public void fetchIndividualCustomers() {
         System.out.println("Customer found with findByUserName('summer'):");
         System.out.println("--------------------------------");
@@ -85,10 +91,41 @@ public class CustomerRepositoryTest {
     }
 
     @Test
+    public void fetchIndividualCustomersLike() {
+        System.out.println("Customer found with findByUserName('summer'):");
+        System.out.println("--------------------------------");
+        System.out.println(repository.findByUserName("summer"));
+        System.out.println("--------------------------------");
+        System.out.println("Customers found with findByAddressLike(\"北京\"):");
+        String q="北京";
+        for (Customer customer : repository.findByAddressLike(q)) {
+            System.out.println(customer);
+        }
+    }
+
+    @Test
+    public void regexpQueryCustomer() {
+        System.out.println("Customer found with regSearchCustomer():");
+        System.out.println("--------------------------------");
+        for (Customer customer : customerService.regexpQuery("userName", "ashin.*")) {
+            System.out.println(customer);
+        }
+    }
+
+    @Test
+    public void matchPhraseQueryCustomer() {
+        System.out.println("Customer found with matchPhraseQueryCustomer():");
+        System.out.println("--------------------------------");
+        for (Customer customer : customerService.matchPhraseQuery(   "address", "北京市")) {
+            System.out.println(customer);
+        }
+    }
+
+    @Test
     public void fetchPageCustomers() {
         System.out.println("Customers found with fetchPageCustomers:");
         System.out.println("-------------------------------");
-        Sort sort = new Sort(Sort.Direction.DESC, "address.keyword");
+        Sort sort = new Sort(Sort.Direction.DESC, "age");
         Pageable pageable = PageRequest.of(0, 10, sort);
         Page<Customer> customers=repository.findByAddress("北京", pageable);
         System.out.println("Page customers "+customers.getContent().toString());
